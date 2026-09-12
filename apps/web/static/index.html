@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOPIQ - Private AI SOP & Company Knowledge Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .nav-active { background-color: #1e293b; color: #38bdf8; border-left: 3px solid #38bdf8; }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden text-slate-800">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shrink-0 shadow-xl z-20">
+    <div>
+      <!-- Brand -->
+      <div class="h-16 flex items-center px-6 border-b border-slate-800 gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          S
+        </div>
+        <div>
+          <span class="font-bold text-white text-lg tracking-tight">SOPIQ</span>
+          <span class="text-[10px] block text-sky-400 font-medium tracking-wider uppercase">Private AI Agent</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-3 space-y-1 text-sm font-medium">
+        <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition nav-active">
+          <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
+        </button>
+        <button onclick="navigate('chat')" id="nav-chat" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-robot w-5 text-center text-sky-400"></i> Ask AI Assistant
+        </button>
+        <button onclick="navigate('sops')" id="nav-sops" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-book-bookmark w-5 text-center text-amber-400"></i> Standard SOPs
+        </button>
+        <button onclick="navigate('meetings')" id="nav-meetings" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-microphone w-5 text-center text-emerald-400"></i> Meetings & Transcripts
+        </button>
+        <button onclick="navigate('documents')" id="nav-documents" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-file-lines w-5 text-center text-blue-400"></i> Documents
+        </button>
+        <button onclick="navigate('conflicts')" id="nav-conflicts" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-triangle-exclamation w-5 text-center text-rose-400"></i> Conflicts
+          </div>
+          <span class="bg-rose-500/20 text-rose-400 text-xs px-1.5 py-0.5 rounded-full font-bold">1</span>
+        </button>
+        <button onclick="navigate('gaps')" id="nav-gaps" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-lightbulb w-5 text-center text-amber-400"></i> Knowledge Gaps
+          </div>
+          <span class="bg-amber-500/20 text-amber-400 text-xs px-1.5 py-0.5 rounded-full font-bold">2</span>
+        </button>
+        <button onclick="navigate('onboarding')" id="nav-onboarding" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-graduation-cap w-5 text-center text-teal-400"></i> New Hire Onboarding
+        </button>
+        <div class="pt-3 pb-1 px-3 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">System & Privacy</div>
+        <button onclick="navigate('privacy')" id="nav-privacy" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-shield-halved w-5 text-center text-emerald-400"></i> Privacy Center
+        </button>
+        <button onclick="navigate('agent-setup')" id="nav-agent-setup" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-server w-5 text-center text-indigo-400"></i> Agent Deployment
+        </button>
+        <button onclick="navigate('audit')" id="nav-audit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-fingerprint w-5 text-center text-slate-400"></i> Audit Trail
+        </button>
+      </nav>
+    </div>
+
+    <!-- Agent Status & Role Switcher -->
+    <div class="p-4 border-t border-slate-800 space-y-3 bg-slate-950/40">
+      <div class="flex items-center justify-between text-xs">
+        <span class="text-slate-400 font-medium">Private Agent:</span>
+        <span class="flex items-center gap-1.5 text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+        </span>
+      </div>
+      <div>
+        <label class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold block mb-1">Simulate User Role</label>
+        <select id="userRoleSelect" onchange="switchUserRole(this.value)" class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg p-2 focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          <option value="EMPLOYEE|yash@acme.corp|Sales Operations">Yash Aggarwal (Employee - Sales Ops)</option>
+          <option value="MANAGER|sarah.manager@acme.corp|Operations">Sarah Jenkins (Manager - Ops Lead)</option>
+          <option value="KNOWLEDGE_MANAGER|david.km@acme.corp|Operations">David Miller (Knowledge Manager)</option>
+          <option value="ADMIN|admin@acme.corp|Executive">Administrator (Executive / Owner)</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="flex-1 flex flex-col h-full bg-slate-50 overflow-hidden">
+
+    <!-- TOP HEADER -->
+    <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-4">
+        <h1 id="page-title" class="text-xl font-bold text-slate-900 tracking-tight">Executive Dashboard</h1>
+        <span class="bg-sky-50 text-sky-700 text-xs px-2.5 py-1 rounded-full font-medium border border-sky-100 flex items-center gap-1.5">
+          <i class="fa-solid fa-lock text-[10px]"></i> Zero-Cloud Storage Guarantee
+        </span>
+      </div>
+      <div class="flex items-center gap-4 text-sm">
+        <div class="text-right">
+          <div id="header-user-name" class="font-semibold text-slate-800">Yash Aggarwal</div>
+          <div id="header-user-dept" class="text-xs text-slate-500">Sales Operations &bull; Employee</div>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-sky-600 text-white font-bold flex items-center justify-center shadow-sm">
+          YA
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY (PAGES) -->
+    <div class="flex-1 overflow-y-auto p-8" id="page-container">
+
+      <!-- ================= PAGE: DASHBOARD ================= -->
+      <div id="page-dashboard" class="space-y-6">
+        <!-- Top Banner -->
+        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+          <div class="relative z-10 max-w-2xl space-y-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-sky-400 bg-sky-950/80 px-2.5 py-1 rounded-full border border-sky-800">
+              Privacy Architecture Active
+            </span>
+            <h2 class="text-2xl font-bold text-white tracking-tight">Acme Technologies Private Knowledge Engine</h2>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              All company documents, meeting transcripts, and vectors remain stored inside your private infrastructure. The AI continuously synthesizes and updates standard operating procedures.
+            </p>
+          </div>
+          <div class="absolute right-6 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-6 opacity-20 text-white">
+            <i class="fa-solid fa-shield-virus text-9xl"></i>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active SOPs</div>
+              <div class="text-2xl font-bold text-slate-900 mt-1" id="dash-sops-count">1</div>
+              <div class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-arrow-up"></i> 100% Completeness</div>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-book-bookmark"></i>
+            </div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Meetings Transcribed</div>
+              <div class="text-2xl font-bold text-slate-900 mt-1" id="dash-meetings-count">1</div>
+              <div class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-check"></i> Diarized with Timestamps</div>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-microphone"></i>
+            </div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Documents Ingested</div>
+              <div class="text-2xl font-bold text-slate-900 mt-1" id="dash-docs-count">3</div>
+              <div class="text-xs text-slate-500 font-medium mt-1">8 Chunks Indexed</div>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Detected Conflicts</div>
+              <div class="text-2xl font-bold text-rose-600 mt-1" id="dash-conflicts-count">1</div>
+              <div class="text-xs text-rose-600 font-medium mt-1"><i class="fa-solid fa-bell"></i> Requires Manager Review</div>
+            </div>
+            <div class="w-12 h-12 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activities and Conflict Alert -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Conflict Alert Card -->
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-5 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-rose-800 font-bold text-sm">
+                  <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> KNOWLEDGE CONFLICT DETECTED
+                </div>
+                <span class="text-xs bg-rose-200 text-rose-800 px-2 py-0.5 rounded font-semibold">Pending Review</span>
+              </div>
+              <div class="text-xs text-slate-700 space-y-1">
+                <div><strong class="text-slate-900">Existing SOP:</strong> Finance Manager signs off on setup invoices.</div>
+                <div><strong class="text-slate-900">New Source (Operations Sync):</strong> "Finance Lead now approves invoices instead of Finance Manager."</div>
+              </div>
+              <div class="pt-2 flex gap-3">
+                <button onclick="navigate('conflicts')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+                  Review & Resolve Conflict
+                </button>
+              </div>
+            </div>
+
+            <!-- Recent SOPs Table -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 text-sm">Standard Operating Procedures (SOPs)</h3>
+                <button onclick="navigate('sops')" class="text-xs text-sky-600 hover:text-sky-700 font-semibold">View All &rarr;</button>
+              </div>
+              <div class="divide-y divide-slate-100 text-sm" id="dash-sops-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar Widget: Knowledge Gaps -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-lightbulb text-amber-500"></i> Repeated Knowledge Gaps
+              </h3>
+              <span class="text-xs text-slate-400 font-medium">Unanswered Queries</span>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Questions asked by employees where no SOP currently exists.
+            </p>
+            <div class="space-y-3" id="dash-gaps-list">
+              <!-- Dynamically populated -->
+            </div>
+            <button onclick="navigate('gaps')" class="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold py-2 rounded-lg border border-slate-200 transition">
+              Manage Knowledge Gaps
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PAGE: CHAT (ASK AI) ================= -->
+      <div id="page-chat" class="hidden h-[calc(100vh-8rem)] flex gap-6">
+        <!-- Main Chat Stream -->
+        <div class="flex-1 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+          <!-- Suggested Prompts Bar -->
+          <div class="p-3 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto text-xs shrink-0">
+            <span class="text-slate-400 font-medium py-1 px-2 shrink-0">Suggested:</span>
+            <button onclick="submitPrompt('What should I do after KYC verification?')" class="bg-white border border-slate-200 hover:border-sky-400 hover:text-sky-600 text-slate-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-2xs">
+              What should I do after KYC verification?
+            </button>
+            <button onclick="submitPrompt('Who approves invoices?')" class="bg-white border border-slate-200 hover:border-sky-400 hover:text-sky-600 text-slate-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-2xs">
+              Who approves invoices?
+            </button>
+            <button onclick="submitPrompt('What changed in this SOP after the latest meeting?')" class="bg-white border border-slate-200 hover:border-sky-400 hover:text-sky-600 text-slate-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-2xs">
+              What changed in this SOP?
+            </button>
+            <button onclick="submitPrompt('What should I do if the customer fails KYC?')" class="bg-white border border-slate-200 hover:border-sky-400 hover:text-sky-600 text-slate-700 px-3 py-1 rounded-full whitespace-nowrap transition shadow-2xs">
+              What if customer fails KYC?
+            </button>
+          </div>
+
+          <!-- Message History -->
+          <div class="flex-1 overflow-y-auto p-6 space-y-4" id="chat-messages">
+            <!-- Assistant Intro -->
+            <div class="flex gap-4 max-w-3xl">
+              <div class="w-8 h-8 rounded-full bg-sky-600 text-white flex items-center justify-center shrink-0 text-sm font-bold shadow-sm">
+                AI
+              </div>
+              <div class="bg-slate-100 rounded-2xl rounded-tl-sm p-4 text-sm text-slate-800 leading-relaxed shadow-2xs space-y-2">
+                <p>Hello Yash! I am your company's private AI knowledge assistant.</p>
+                <p>I answer based strictly on verified internal SOPs, documents, and meeting records. All computation and data remain within your local infrastructure.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Bar -->
+          <div class="p-4 border-t border-slate-200 bg-white">
+            <form onsubmit="handleChatSubmit(event)" class="flex gap-3">
+              <input type="text" id="chatInput" placeholder="Ask about onboarding, KYC handoffs, invoice sign-offs, or policies..." class="flex-1 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-inner">
+              <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2">
+                <span>Send</span> <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Side Citations Drawer -->
+        <div class="w-80 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col shrink-0 overflow-hidden">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-quote-left text-sky-500"></i> Grounded Citations
+            </h3>
+            <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full">High Confidence</span>
+          </div>
+          <div class="flex-1 overflow-y-auto pt-3 space-y-3" id="active-citations">
+            <div class="text-xs text-slate-400 italic text-center py-8">
+              Ask a question to view traceable citations and source references.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PAGE: SOPS ================= -->
+      <div id="page-sops" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Company Standard Operating Procedures</h2>
+            <p class="text-sm text-slate-500">Continuously extracted from team meetings and verified by Department Leads.</p>
+          </div>
+          <div class="flex gap-3">
+            <button onclick="showSOPDiff()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center gap-2">
+              <i class="fa-solid fa-code-compare text-indigo-500"></i> Compare v1 vs v2
+            </button>
+          </div>
+        </div>
+
+        <div id="sops-container" class="space-y-6">
+          <!-- Dynamically populated with full SOP viewer, steps, workflow diagram, and approvals -->
+        </div>
+      </div>
+
+      <!-- ================= PAGE: MEETINGS ================= -->
+      <div id="page-meetings" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Operations Meetings & Transcripts</h2>
+            <p class="text-sm text-slate-500">Recordings transcribed locally via whisper with speaker segmentation and timestamps.</p>
+          </div>
+        </div>
+        <div id="meetings-container" class="space-y-6">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- ================= PAGE: DOCUMENTS ================= -->
+      <div id="page-documents" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Company Document Repository</h2>
+            <p class="text-sm text-slate-500">Parsed and indexed into local vector storage with sensitivity tags.</p>
+          </div>
+          <button onclick="openUploadModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-upload"></i> Ingest New Document
+          </button>
+        </div>
+        <div id="documents-container" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- ================= PAGE: CONFLICTS ================= -->
+      <div id="page-conflicts" class="hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 tracking-tight">Knowledge Conflict Review Engine</h2>
+          <p class="text-sm text-slate-500">Surfaces contradictions between newly spoken procedures and existing active SOPs.</p>
+        </div>
+        <div id="conflicts-container" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- ================= PAGE: GAPS ================= -->
+      <div id="page-gaps" class="hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 tracking-tight">Knowledge Gaps & Unanswered Inquiries</h2>
+          <p class="text-sm text-slate-500">Automatically tracks employee queries that lacked sufficient internal evidence.</p>
+        </div>
+        <div id="gaps-container" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- ================= PAGE: ONBOARDING ================= -->
+      <div id="page-onboarding" class="hidden space-y-6">
+        <div class="bg-gradient-to-r from-teal-900 to-slate-900 rounded-2xl p-6 text-white shadow-md space-y-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-300 bg-teal-950/80 px-2.5 py-1 rounded-full border border-teal-800">
+            First Week Portal
+          </span>
+          <h2 class="text-2xl font-bold tracking-tight">Welcome to Sales Operations, Yash!</h2>
+          <p class="text-teal-100 text-sm max-w-2xl">
+            Here is your personalized Day 1-7 curriculum. Complete these milestones to master our onboarding and compliance workflows.
+          </p>
+        </div>
+        <div id="onboarding-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- ================= PAGE: PRIVACY CENTER ================= -->
+      <div id="page-privacy" class="hidden space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
+              Zero-Cloud Verification
+            </span>
+            <h2 class="text-2xl font-bold text-slate-900 mt-2 tracking-tight">Enterprise Privacy & Data Flow Architecture</h2>
+            <p class="text-sm text-slate-500 mt-1 leading-relaxed">
+              Designed so company knowledge can remain inside the customer's infrastructure by default. The cloud control plane manages licensing and agent tokens, but never receives raw company knowledge.
+            </p>
+          </div>
+
+          <!-- Comparison Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-slate-900 text-white rounded-xl p-5 space-y-4 shadow-sm">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                <i class="fa-solid fa-server"></i> CUSTOMER INFRASTRUCTURE (Private Agent)
+              </div>
+              <ul class="text-xs text-slate-300 space-y-2.5">
+                <li class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <span>Document Storage</span>
+                  <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> Customer On-Premise / VPC</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <span>Meeting Audio & Transcripts</span>
+                  <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> Local Faster-Whisper</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <span>Vector Database & Chunks</span>
+                  <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> Local pgvector / SQLite</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <span>AI Inference & RAG</span>
+                  <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> Local LLM / Ollama</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <span>SOP Generation & Versioning</span>
+                  <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> Private Agent</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span>Data Egress Policy Mode</span>
+                  <span class="text-emerald-400 font-semibold font-mono">PRIVATE_ONLY</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
+              <div class="flex items-center gap-2 text-slate-700 font-bold text-sm">
+                <i class="fa-solid fa-cloud"></i> RANKPILOT CONTROL PLANE (Cloud Hosted)
+              </div>
+              <ul class="text-xs text-slate-600 space-y-2.5">
+                <li class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                  <span>Tenant Accounts & Licensing</span>
+                  <span class="text-slate-800 font-semibold">Metadata Only</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                  <span>Agent Enrollment & Heartbeat</span>
+                  <span class="text-slate-800 font-semibold">Status & Version Only</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                  <span>Raw Company Documents</span>
+                  <span class="text-rose-600 font-bold"><i class="fa-solid fa-xmark"></i> NEVER STORED (Blocked)</span>
+                </li>
+                <li class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                  <span>Transcripts & Recordings</span>
+                  <span class="text-rose-600 font-bold"><i class="fa-solid fa-xmark"></i> NEVER STORED (Blocked)</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span>Employee AI Inquiries</span>
+                  <span class="text-rose-600 font-bold"><i class="fa-solid fa-xmark"></i> NEVER TRANSMITTED</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PAGE: AGENT SETUP ================= -->
+      <div id="page-agent-setup" class="hidden space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Private Agent Deployment Wizard</h2>
+            <p class="text-sm text-slate-500 mt-1">Deploy SOPIQ inside your own Kubernetes cluster, Docker host, or on-premise server.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">1</div>
+              <div class="space-y-1">
+                <h4 class="font-bold text-sm text-slate-900">Generate Agent Enrollment Token</h4>
+                <p class="text-xs text-slate-500">Creates a rotatable, short-lived enrollment secret in the control plane.</p>
+                <div class="pt-2">
+                  <span class="font-mono text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-slate-700">sopq_enr_8a7dfa8721c4</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">2</div>
+              <div class="space-y-2 flex-1">
+                <h4 class="font-bold text-sm text-slate-900">Run Private Agent Container</h4>
+                <p class="text-xs text-slate-500">Execute this single command on your company server inside your firewall:</p>
+                <div class="bg-slate-900 text-slate-200 p-3 rounded-lg font-mono text-xs flex items-center justify-between">
+                  <code>docker run -d --name sopiq-agent -e CONTROL_PLANE_URL=https://api.sopiq.ai -e AGENT_ENROLLMENT_TOKEN=sopq_enr_8a7dfa8721c4 -p 8001:8001 sopiq/agent:1.0.4</code>
+                  <button onclick="alert('Copied to clipboard!')" class="text-xs bg-slate-800 hover:bg-slate-700 text-sky-400 px-3 py-1 rounded transition">Copy</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0"><i class="fa-solid fa-check"></i></div>
+              <div class="space-y-1">
+                <h4 class="font-bold text-sm text-slate-900">Agent Handshake Confirmed</h4>
+                <p class="text-xs text-slate-500">The agent establishes an outbound TLS connection, receives configuration, and enters ONLINE status.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PAGE: AUDIT TRAIL ================= -->
+      <div id="page-audit" class="hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 tracking-tight">Security & Governance Audit Log</h2>
+          <p class="text-sm text-slate-500">Immutable chronological record of logins, SOP approvals, secret detections, and AI queries.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden" id="audit-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

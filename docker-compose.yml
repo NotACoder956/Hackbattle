@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. Cloud Control Plane
+  control-api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.control
+    container_name: sopiq-control-api
+    ports:
+      - "8000:8000"
+    environment:
+      - CONTROL_PLANE_PORT=8000
+      - CONTROL_PLANE_DB_PATH=/app/data/control_plane.db
+    volumes:
+      - control-data:/app/data
+
+  # 2. Customer-Side Private Agent (Runs inside company VPC / On-Premise)
+  private-agent:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.agent
+    container_name: sopiq-private-agent
+    ports:
+      - "8001:8001"
+    environment:
+      - CONTROL_PLANE_URL=http://control-api:8000
+      - AGENT_ID=agt_acme_hq_001
+      - TENANT_ID=ten_0bf7f488ef41
+      - DATA_EGRESS_MODE=PRIVATE_ONLY
+      - LLM_MODE=LOCAL
+      - AGENT_PORT=8001
+      - STORAGE_PATH=/app/storage_data
+    volumes:
+      - agent-data:/app/storage_data
+    depends_on:
+      - control-api
+
+  # 3. Web Console Application
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+    container_name: sopiq-web
+    ports:
+      - "3000:3000"
+    environment:
+      - WEB_PORT=3000
+      - CONTROL_PLANE_URL=http://control-api:8000
+      - PRIVATE_AGENT_URL=http://private-agent:8001
+    depends_on:
+      - control-api
+      - private-agent
+
+volumes:
+  control-data:
+  agent-data:

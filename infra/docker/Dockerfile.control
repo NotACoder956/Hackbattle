@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY packages/ /app/packages/
+COPY apps/control-api/ /app/apps/control-api/
+
+RUN mkdir -p /app/data
+
+EXPOSE 8000
+
+CMD ["python", "apps/control-api/server.py"]

@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY packages/ /app/packages/
+COPY agent/ /app/agent/
+
+RUN mkdir -p /app/storage_data/documents /app/storage_data/meetings
+
+EXPOSE 8001
+
+CMD ["python", "agent/main.py"]
